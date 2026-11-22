@@ -1,5 +1,5 @@
 // Builds data.json: weather and snow from Open-Meteo (free, no key).
-// Lifts and runs open are left empty for now; the page links to each resort's report instead.
+// Lifts and runs open come from a resort's own report page when resorts.json gives a "scrape" URL.
 import { readFile, writeFile } from "node:fs/promises";
 
 const resorts = JSON.parse(await readFile(new URL("../resorts.json", import.meta.url)));
@@ -36,11 +36,40 @@ async function weather(r) {
   };
 }
 
+// Reads "3/7 Lifts Open" (either order) from the page's text. Returns null if the layout changed.
+export function parseReport(html) {
+  const text = html.replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/\s+/g, " ");
+  const pair = (label) => {
+    const m = text.match(new RegExp(`(\\d+)\\s*/\\s*(\\d+)\\s*${label}`, "i"))
+      || text.match(new RegExp(`${label}\\s*(\\d+)\\s*/\\s*(\\d+)`, "i"));
+    return m ? [Number(m[1]), Number(m[2])] : null;
+  };
+  const lifts = pair("Lifts Open"), runs = pair("(?:Trails|Runs) Open");
+  return lifts || runs ? { lifts, runs } : null;
+}
+
+async function report(r) {
+  const res = await fetch(r.scrape, { headers: { "user-agent": "Mozilla/5.0 (vegas-ski-report; personal use)" } });
+  if (!res.ok) throw new Error(`${r.name} report: HTTP ${res.status}`);
+  const got = parseReport(await res.text());
+  if (!got) throw new Error(`${r.name} report: could not find lift or run counts`);
+  return { ...got, status: (got.lifts?.[0] ?? got.runs?.[0] ?? 0) > 0 ? "open" : "closed" };
+}
+
+if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split("/").pop())) await main();
+async function main() {
 const out = [];
 for (const r of resorts) {
   const base = { name: r.name, state: r.state, miles: r.miles, report: r.report, status: "unknown", lifts: null, runs: null };
-  try { out.push({ ...base, ...(await weather(r)) }); }
-  catch (e) { console.error(e.message); out.push({ ...base, snow24: null, snow72: null, depth: null, tempF: null, wind: null, sky: null }); }
+  try { Object.assign(base, await weather(r)); }
+  catch (e) { console.error(e.message); Object.assign(base, { snow24: null, snow72: null, depth: null, tempF: null, wind: null, sky: null }); }
+  if (r.scrape) {
+    try { Object.assign(base, await report(r)); console.log(`${r.name}: lifts ${base.lifts}, runs ${base.runs}`); }
+    catch (e) { console.error(e.message); }
+  }
+  out.push(base);
 }
 await writeFile(new URL("../data.json", import.meta.url), JSON.stringify({ updated: new Date().toISOString(), resorts: out }, null, 2));
 console.log(`Wrote ${out.length} resorts`);
+}

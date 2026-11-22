@@ -1,13 +1,91 @@
 [
-  {"name":"Lee Canyon","state":"NV","miles":31,"lat":36.3036,"lon":-115.6797,"report":"https://www.leecanyonlv.com/"},
-  {"name":"Brian Head","state":"UT","miles":165,"lat":37.7022,"lon":-112.8497,"report":"https://www.brianhead.com/"},
-  {"name":"Bear Mountain","state":"CA","miles":166,"lat":34.2275,"lon":-116.8603,"report":"https://www.bigbearmountainresort.com/"},
-  {"name":"Snow Summit","state":"CA","miles":166,"lat":34.2364,"lon":-116.8892,"report":"https://www.bigbearmountainresort.com/"},
-  {"name":"Snow Valley","state":"CA","miles":172,"lat":34.2253,"lon":-117.0367,"report":"https://www.snow-valley.com/"},
-  {"name":"Mountain High","state":"CA","miles":190,"lat":34.3772,"lon":-117.6886,"report":"https://www.mthigh.com/"},
-  {"name":"Elk Ridge","state":"AZ","miles":191,"lat":35.16,"lon":-112.09,"report":"https://www.elkridgeski.com/"},
-  {"name":"Mt. Baldy","state":"CA","miles":192,"lat":34.2706,"lon":-117.6236,"report":"https://www.mtbaldyresort.com/"},
-  {"name":"Arizona Snowbowl","state":"AZ","miles":201,"lat":35.3306,"lon":-111.7111,"report":"https://www.snowbowl.ski/"},
-  {"name":"Mt. Waterman","state":"CA","miles":202,"lat":34.335,"lon":-117.935,"report":"https://www.mtwaterman.org/"},
-  {"name":"Eagle Point","state":"UT","miles":212,"lat":38.3203,"lon":-112.3836,"report":"https://www.eaglepointresort.com/"}
+  {
+    "name": "Lee Canyon",
+    "state": "NV",
+    "miles": 31,
+    "lat": 36.3036,
+    "lon": -115.6797,
+    "report": "https://www.leecanyonlv.com/",
+    "scrape": "https://www.leecanyonlv.com/lifts-and-trails"
+  },
+  {
+    "name": "Brian Head",
+    "state": "UT",
+    "miles": 165,
+    "lat": 37.7022,
+    "lon": -112.8497,
+    "report": "https://www.brianhead.com/"
+  },
+  {
+    "name": "Bear Mountain",
+    "state": "CA",
+    "miles": 166,
+    "lat": 34.2275,
+    "lon": -116.8603,
+    "report": "https://www.bigbearmountainresort.com/"
+  },
+  {
+    "name": "Snow Summit",
+    "state": "CA",
+    "miles": 166,
+    "lat": 34.2364,
+    "lon": -116.8892,
+    "report": "https://www.bigbearmountainresort.com/"
+  },
+  {
+    "name": "Snow Valley",
+    "state": "CA",
+    "miles": 172,
+    "lat": 34.2253,
+    "lon": -117.0367,
+    "report": "https://www.snow-valley.com/"
+  },
+  {
+    "name": "Mountain High",
+    "state": "CA",
+    "miles": 190,
+    "lat": 34.3772,
+    "lon": -117.6886,
+    "report": "https://www.mthigh.com/"
+  },
+  {
+    "name": "Elk Ridge",
+    "state": "AZ",
+    "miles": 191,
+    "lat": 35.16,
+    "lon": -112.09,
+    "report": "https://www.elkridgeski.com/"
+  },
+  {
+    "name": "Mt. Baldy",
+    "state": "CA",
+    "miles": 192,
+    "lat": 34.2706,
+    "lon": -117.6236,
+    "report": "https://www.mtbaldyresort.com/"
+  },
+  {
+    "name": "Arizona Snowbowl",
+    "state": "AZ",
+    "miles": 201,
+    "lat": 35.3306,
+    "lon": -111.7111,
+    "report": "https://www.snowbowl.ski/"
+  },
+  {
+    "name": "Mt. Waterman",
+    "state": "CA",
+    "miles": 202,
+    "lat": 34.335,
+    "lon": -117.935,
+    "report": "https://www.mtwaterman.org/"
+  },
+  {
+    "name": "Eagle Point",
+    "state": "UT",
+    "miles": 212,
+    "lat": 38.3203,
+    "lon": -112.3836,
+    "report": "https://www.eaglepointresort.com/"
+  }
 ]
