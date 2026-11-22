@@ -1,0 +1,180 @@
+<title>Vegas Ski Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap">
+<style>
+/* Layout: a single column of resort cards, nearest first, each with a big new-snow figure and a strip of stats */
+:root {
+  --bg: #f3f6f9;
+  --surface: #ffffff;
+  --ink: #142232;
+  --muted: #5b6b7c;
+  --line: #d9e1ea;
+  --accent: #1f6fb2;
+  --good: #1d7a4a;
+  --warn: #a8640c;
+  --bad: #b03a3a;
+  --chip: #e7eef5;
+  --display: "Barlow Condensed", "Arial Narrow", system-ui, sans-serif;
+  --body: "Barlow", system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d151e; --surface: #15212d; --ink: #e6edf4; --muted: #93a3b4; --line: #26384a;
+    --accent: #6cb4ef; --good: #5fcf92; --warn: #e8a64a; --bad: #ef8080; --chip: #1e2e3e; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d151e; --surface: #15212d; --ink: #e6edf4; --muted: #93a3b4; --line: #26384a;
+  --accent: #6cb4ef; --good: #5fcf92; --warn: #e8a64a; --bad: #ef8080; --chip: #1e2e3e; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+}
+.wrap { max-width: 760px; margin: 0 auto; display: grid; gap: 20px; }
+header { display: grid; gap: 6px; }
+h1 { font-family: var(--display); font-weight: 700; font-size: 2.4rem; line-height: 1; margin: 0; letter-spacing: .01em; text-wrap: balance; }
+.sub { color: var(--muted); margin: 0; }
+.notice { background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: .92rem; }
+.notice[hidden] { display: none; }
+.controls { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.controls span { color: var(--muted); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
+.controls button {
+  font: inherit; font-size: .92rem; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); cursor: pointer;
+}
+.controls button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+.controls button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.list { display: grid; gap: 12px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px; display: grid; gap: 14px; }
+.top { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.name { min-width: 0; }
+.name h2 { font-family: var(--display); font-weight: 600; font-size: 1.5rem; line-height: 1.1; margin: 0; }
+.meta { color: var(--muted); font-size: .88rem; display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 4px; }
+.pill { font-size: .78rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; padding: 3px 8px; border-radius: 999px; white-space: nowrap; border: 1px solid currentColor; }
+.pill.open { color: var(--good); } .pill.closed { color: var(--bad); } .pill.unknown { color: var(--muted); }
+.fresh { text-align: right; flex-shrink: 0; }
+.fresh b { font-family: var(--display); font-size: 2.6rem; line-height: .9; font-variant-numeric: tabular-nums; display: block; }
+.fresh small { color: var(--muted); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; border-top: 1px solid var(--line); padding-top: 12px; }
+.stat { min-width: 0; }
+.stat dt { color: var(--muted); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+.stat dd { margin: 2px 0 0; font-weight: 600; font-size: 1.05rem; font-variant-numeric: tabular-nums; }
+.stat dd .of { color: var(--muted); font-weight: 400; }
+.bar { height: 4px; background: var(--chip); border-radius: 2px; margin-top: 5px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--accent); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 12px; color: var(--muted); font-size: .85rem; }
+.foot a { color: var(--accent); }
+.far { opacity: .85; }
+footer { color: var(--muted); font-size: .85rem; }
+@media (max-width: 520px) {
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  h1 { font-size: 2rem; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Vegas Ski Report</h1>
+    <p class="sub">Snow and lift status for resorts within about 200 miles of Las Vegas.</p>
+  </header>
+
+  <div class="notice" id="notice" hidden></div>
+
+  <div class="controls" role="group" aria-label="Sort resorts">
+    <span>Sort</span>
+    <button type="button" id="sort-distance" data-sort="distance" aria-pressed="true">Nearest</button>
+    <button type="button" id="sort-snow" data-sort="snow24" aria-pressed="false">Most new snow</button>
+    <button type="button" id="sort-depth" data-sort="depth" aria-pressed="false">Deepest base</button>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <footer id="updated"></footer>
+</div>
+
+<script>
+// Example numbers so the page shows something before the live job runs. Replaced by data.json when it exists.
+const SAMPLE = {
+  sample: true,
+  updated: "2026-11-01T18:00:00Z",
+  resorts: [
+    { name: "Lee Canyon", state: "NV", miles: 31, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 3], runs: [0, 30], tempF: 41, wind: 12, sky: "Partly cloudy", report: "https://www.leecanyonlv.com/" },
+    { name: "Brian Head", state: "UT", miles: 165, status: "closed", snow24: 0, snow72: 2, depth: 0, lifts: [0, 8], runs: [0, 71], tempF: 36, wind: 9, sky: "Clear", report: "https://www.brianhead.com/" },
+    { name: "Bear Mountain", state: "CA", miles: 166, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 12], runs: [0, 27], tempF: 52, wind: 6, sky: "Sunny", report: "https://www.bigbearmountainresort.com/" },
+    { name: "Snow Summit", state: "CA", miles: 166, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 14], runs: [0, 31], tempF: 51, wind: 7, sky: "Sunny", report: "https://www.bigbearmountainresort.com/" },
+    { name: "Snow Valley", state: "CA", miles: 172, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 11], runs: [0, 29], tempF: 50, wind: 8, sky: "Sunny", report: "https://www.snow-valley.com/" },
+    { name: "Mountain High", state: "CA", miles: 190, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 16], runs: [0, 59], tempF: 49, wind: 14, sky: "Breezy", report: "https://www.mthigh.com/" },
+    { name: "Elk Ridge", state: "AZ", miles: 191, status: "closed", snow24: 0, snow72: 1, depth: 0, lifts: [0, 1], runs: [0, 8], tempF: 44, wind: 10, sky: "Clear", report: "https://www.elkridgeski.com/" },
+    { name: "Mt. Baldy", state: "CA", miles: 192, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 4], runs: [0, 26], tempF: 47, wind: 11, sky: "Sunny", report: "https://www.mtbaldyresort.com/" },
+    { name: "Arizona Snowbowl", state: "AZ", miles: 201, status: "closed", snow24: 1, snow72: 3, depth: 0, lifts: [0, 8], runs: [0, 55], tempF: 38, wind: 15, sky: "Light snow", report: "https://www.snowbowl.ski/" },
+    { name: "Mt. Waterman", state: "CA", miles: 202, status: "closed", snow24: 0, snow72: 0, depth: 0, lifts: [0, 3], runs: [0, 25], tempF: 48, wind: 9, sky: "Sunny", report: "https://www.mtwaterman.org/" },
+    { name: "Eagle Point", state: "UT", miles: 212, status: "closed", snow24: 0, snow72: 2, depth: 0, lifts: [0, 5], runs: [0, 40], tempF: 33, wind: 8, sky: "Clear", report: "https://www.eaglepointresort.com/" }
+  ]
+};
+
+let data = SAMPLE;
+let sortKey = "distance";
+const $ = (id) => document.getElementById(id);
+const dash = "–";
+
+function frac(pair) {
+  if (!pair || pair[0] == null || pair[1] == null) return `<span class="of">${dash}</span>`;
+  const pct = pair[1] ? Math.round((pair[0] / pair[1]) * 100) : 0;
+  return `${pair[0]}<span class="of"> / ${pair[1]}</span><div class="bar"><i style="width:${pct}%"></i></div>`;
+}
+function inches(v) { return v == null ? dash : `${v}"`; }
+
+function render() {
+  const rows = [...data.resorts].sort((a, b) => {
+    if (sortKey === "snow24") return (b.snow24 ?? -1) - (a.snow24 ?? -1) || a.miles - b.miles;
+    if (sortKey === "depth") return (b.depth ?? -1) - (a.depth ?? -1) || a.miles - b.miles;
+    return a.miles - b.miles;
+  });
+  $("list").innerHTML = rows.map((r) => {
+    const st = r.status === "open" ? ["open", "Open"] : r.status === "closed" ? ["closed", "Closed"] : ["unknown", "No report"];
+    return `<article class="card${r.miles > 200 ? " far" : ""}">
+      <div class="top">
+        <div class="name">
+          <h2>${r.name}</h2>
+          <div class="meta"><span>${r.state} · ${r.miles} mi${r.miles > 200 ? " (just over 200)" : ""}</span><span class="pill ${st[0]}">${st[1]}</span></div>
+        </div>
+        <div class="fresh"><b>${inches(r.snow24)}</b><small>New, 24 hr</small></div>
+      </div>
+      <dl class="stats">
+        <div class="stat"><dt>Base depth</dt><dd>${inches(r.depth)}</dd></div>
+        <div class="stat"><dt>New, 72 hr</dt><dd>${inches(r.snow72)}</dd></div>
+        <div class="stat"><dt>Lifts open</dt><dd>${frac(r.lifts)}</dd></div>
+        <div class="stat"><dt>Runs open</dt><dd>${frac(r.runs)}</dd></div>
+      </dl>
+      <div class="foot">
+        <span>${r.tempF == null ? dash : r.tempF + "°F"} · ${r.sky ?? dash} · wind ${r.wind == null ? dash : r.wind + " mph"}</span>
+        <a href="${r.report}" target="_blank" rel="noopener">Resort report</a>
+      </div>
+    </article>`;
+  }).join("");
+  const when = new Date(data.updated);
+  $("updated").textContent = `Updated ${when.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}. Weather and new snow from Open-Meteo. Base depth, lifts and runs from each resort's report. Distances are straight-line miles.`;
+  const n = $("notice");
+  n.hidden = !data.sample;
+  n.textContent = data.sample ? "These are example numbers to show the layout. Live data arrives once the update job is running." : "";
+}
+
+document.querySelectorAll(".controls button").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    sortKey = btn.dataset.sort;
+    document.querySelectorAll(".controls button").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    render();
+  });
+});
+
+render();
+fetch("data.json", { cache: "no-store" })
+  .then((r) => (r.ok ? r.json() : null))
+  .then((d) => { if (d && Array.isArray(d.resorts)) { data = d; render(); } })
+  .catch(() => {});
+</script>
