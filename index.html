@@ -1,3 +1,9 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Snow depth, new snow, lifts and runs open, and weather for ski resorts near Las Vegas.">
 <title>Vegas Ski Report</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,6 +35,8 @@
   --accent: #6cb4ef; --good: #5fcf92; --warn: #e8a64a; --bad: #ef8080; --chip: #1e2e3e; color-scheme: dark;
 }
 * { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; }
 body {
   background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 16px; line-height: 1.45;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
@@ -73,11 +81,17 @@ h1 { font-family: var(--display); font-weight: 700; font-size: 2.4rem; line-heig
 .far { opacity: .85; }
 footer { color: var(--muted); font-size: .85rem; }
 @media (max-width: 520px) {
-  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  h1 { font-size: 2rem; }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 12px; }
+  h1 { font-size: 2.1rem; }
+  .meta, .foot, .sub, footer { font-size: 1rem; }
+  .stat dt, .fresh small { font-size: .85rem; }
+  .stat dd { font-size: 1.2rem; }
+  .name h2 { font-size: 1.7rem; }
 }
 </style>
 
+</head>
+<body>
 <div class="wrap">
   <img class="hero" src="hero.jpg" alt="A skier carving down a groomed run under a blue sky" onerror="this.remove()">
   <header>
@@ -180,3 +194,5 @@ fetch("data.json", { cache: "no-store" })
   .then((d) => { if (d && Array.isArray(d.resorts)) { data = d; render(); } })
   .catch(() => {});
 </script>
+</body>
+</html>
